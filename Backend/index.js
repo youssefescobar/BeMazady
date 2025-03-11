@@ -1,21 +1,34 @@
-require('dotenv').config();
+const dotenv = require('dotenv');
+const dbConnect = require('./config/DBconnection')
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
+const AuthRoutes = require('./routes/AuthRoute')
 
-const User = require('./models/User');
-const Item = require('./models/Item');
-const Auction = require('./models/Auction');
-const Bid = require('./models/Bid');
-const Payment = require('./models/Payment');
-const Notification = require('./models/Notifaction');
+// Load environment variables
+dotenv.config();
 
+// Initialize express app
 const app = express();
-app.use(express.json());
-app.use(cors());
+const PORT = process.env.PORT || 5000;
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.error("MongoDB Connection Error:", err));
+
+// Database connection
+dbConnect();
+
+// Middleware
+app.use(express.json());
+
+// Routes
+app.use('/api/auth', AuthRoutes);
+
+// Test route
+app.get('/', (req, res) => {
+    res.send('Hello, world!');
+});
+
+// Start the server
+app.listen(PORT, ()=>{
+    console.log("server online on port:", PORT)
+})
+
+
 
